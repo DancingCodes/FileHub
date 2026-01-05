@@ -69,7 +69,7 @@ const uploadFile = (file: File) => {
     uploadFileApi(formData, (progress) => {
         console.log(`上传进度: ${progress}%`)
     }).then((res) => {
-        fileUrl.value = res.data.url
+        fileUrl.value = res.data.data
     }).finally(() => {
         isUploading.value = false
         if (fileIptRef.value) fileIptRef.value.value = ''
