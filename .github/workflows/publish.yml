@@ -1,0 +1,62 @@
+name: Manual Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "选择发版目标"
+        required: true
+        default: "backend"
+        type: choice
+        options:
+          - backend
+          - frontend
+          - all
+      version:
+        description: "版本号 (如 v1.0.0)"
+        required: true
+
+jobs:
+  # --- 后端构建任务 ---
+  build-backend:
+    if: ${{ github.event.inputs.target == 'backend' || github.event.inputs.target == 'all' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend # 这里的路径必须对应你的子目录
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/filehub-backend:${{ github.event.inputs.version }}
+            ghcr.io/${{ github.repository_owner }}/filehub-backend:latest
+
+  # --- 前端构建任务 ---
+  build-frontend:
+    if: ${{ github.event.inputs.target == 'frontend' || github.event.inputs.target == 'all' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend # 指向前端目录
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/filehub-frontend:${{ github.event.inputs.version }}
+            ghcr.io/${{ github.repository_owner }}/filehub-frontend:latest
