@@ -13,7 +13,7 @@
     <Toaster position="top-center" />
 </template>
 <script setup lang="ts">
-import { Toaster, toast } from 'vue-sonner'
+import { Toaster } from 'vue-sonner'
 import { uploadFileApi } from '@/api/file'
 import { ref, onMounted, onUnmounted } from 'vue'
 onMounted(() => {
