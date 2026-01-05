@@ -58,25 +58,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 设置 Node.js 22
+      - name: 安装Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
-          cache-dependency-path: "./frontend/package-lock.json" # 指向你的前端目录
 
-      - name: 安装依赖并打包
+      - name: 打包
         run: |
           cd frontend
           npm install
           npm run build
+          tar -czf dist.tar.gz dist/
 
-      - name: 上传文件到服务器
+      - name: 发送到服务器
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "frontend/dist/*"
+          source: "frontend/dist.tar.gz"
           target: "/opt/filehub/frontend"
-          strip_components: 2
+          strip_components: 1
+
+      - name: 远程部署与版本留存
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/filehub/frontend
+            
+            mkdir -p backups
+            
+            cp dist.tar.gz backups/frontend-${{ github.event.inputs.version }}.tar.gz
+            
+            tar -xzf dist.tar.gz
+            
+            rm dist.tar.gz
