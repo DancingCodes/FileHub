@@ -1,7 +1,5 @@
 .env
 uploads/
-.git
-.gitignore
 .idea/
 Dockerfile
 docker-compose.yml
