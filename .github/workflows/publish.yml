@@ -48,8 +48,8 @@ jobs:
           script: |
             cd /opt/filehub
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            docker-compose pull backend
-            docker-compose up -d backend
+            docker compose pull backend
+            docker compose up -d backend
 
   # --- 前端构建任务 ---
   build-frontend:
