@@ -75,7 +75,7 @@ const uploadFile = (file: File) => {
     uploadFileApi(formData, (progress) => {
         uploadProgress.value = progress
     }).then((res: any) => {
-        fileUrl.value = res.data.file_uuid
+        fileUrl.value = res.data.file_url
     }).finally(() => {
         isUploading.value = false
         if (fileIptRef.value) fileIptRef.value.value = ''
