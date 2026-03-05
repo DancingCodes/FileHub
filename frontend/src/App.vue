@@ -74,8 +74,8 @@ const uploadFile = (file: File) => {
 
     uploadFileApi(formData, (progress) => {
         uploadProgress.value = progress
-    }).then((res) => {
-        fileUrl.value = `https://filehub.moonc.love/uploads/${res.data.file_uuid}`
+    }).then((res: any) => {
+        fileUrl.value = res.data.file_uuid
     }).finally(() => {
         isUploading.value = false
         if (fileIptRef.value) fileIptRef.value.value = ''
